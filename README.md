@@ -1,7 +1,7 @@
 # proxyaddr
 
 [![Build Status](https://travis-ci.org/zesik/proxyaddr.svg?branch=master)](https://travis-ci.org/zesik/proxyaddr)
-[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/zesik/proxyaddr)
+[![GoDoc](https://godoc.org/github.com/zesik/proxyaddr?status.svg)](https://godoc.org/github.com/zesik/proxyaddr)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zesik/proxyaddr)](https://goreportcard.com/report/github.com/zesik/proxyaddr)
 
 Package `proxyaddr` is a middleware for determining client address for proxied requests in Go.
