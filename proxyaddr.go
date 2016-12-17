@@ -1,4 +1,4 @@
-// Package `proxyaddr` is a middleware for determining client address for proxied requests.
+// Package proxyaddr is a middleware for determining client address for proxied requests.
 package proxyaddr
 
 import (
@@ -14,20 +14,20 @@ type ProxyAddr struct {
 }
 
 const (
-	// IPv4 and IPv6 loopback addresses
-	CIDRLoopback    = "loopback"
+	// CIDRLoopback represents IPv4 and IPv6 loopback addresses
+	CIDRLoopback = "loopback"
 
-	// IPv4 and IPv6 link-local addresses
-	CIDRLinkLocal   = "linklocal"
+	// CIDRLinkLocal represents IPv4 and IPv6 link-local addresses
+	CIDRLinkLocal = "linklocal"
 
-	// IPv4 private addresses and IPv6 unique local addresses
+	// CIDRUniqueLocal represents IPv4 private addresses and IPv6 unique local addresses
 	CIDRUniqueLocal = "uniquelocal"
 )
 
 var commonCIDR = map[string][]string{
-	CIDRLinkLocal:   []string{"169.254.0.0/16", "fe80::/10"},
-	CIDRLoopback:    []string{"127.0.0.1/8", "::1/128"},
-	CIDRUniqueLocal: []string{"10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"},
+	CIDRLinkLocal:   {"169.254.0.0/16", "fe80::/10"},
+	CIDRLoopback:    {"127.0.0.1/8", "::1/128"},
+	CIDRUniqueLocal: {"10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"},
 }
 
 // Init initializes the list of trusted proxies with provided string values.
