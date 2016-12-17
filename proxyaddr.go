@@ -36,7 +36,7 @@ var commonCIDR = map[string][]string{
 // Parameters of Init can only be exported constants of this package or CIDR-formatted strings (like 10.0.0.0/8).
 func (pa *ProxyAddr) Init(trustedProxies ...string) error {
 	pa.trustedProxies = nil
-	trustedNetworks := make([]*net.IPNet, 0)
+	var trustedNetworks []*net.IPNet
 	for _, proxyCIDR := range trustedProxies {
 		if cidrList, ok := commonCIDR[proxyCIDR]; ok {
 			for _, cidr := range cidrList {
