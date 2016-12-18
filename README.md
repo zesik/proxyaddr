@@ -56,7 +56,8 @@ func main() {
 	pa := &proxyaddr.ProxyAddr{}
 	pa.Init(proxyaddr.CIDRLoopback)
 
-	n := negroni.New(pa)
+	n := negroni.New()
+	n.Use(pa)
 	n.UseHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(r.RemoteAddr))
 	}))
