@@ -3,9 +3,11 @@ package proxyaddr
 import (
 	"net"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/negroni"
 )
 
 func TestInitSingleCIDR(t *testing.T) {
@@ -149,4 +151,46 @@ func TestGetRemoteAddrIPv6WithNoProxy(t *testing.T) {
 	r := &http.Request{RemoteAddr: "[2001:1620:28::116]:51202"}
 
 	assert.Equal(t, "[2001:1620:28::116]:51202", pa.getRemoteAddr(r))
+}
+
+func TestProxyAddrHTTPHandler(t *testing.T) {
+	pa := &ProxyAddr{}
+	err := pa.Init(CIDRLoopback)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest("GET", "/", nil)
+	assert.NoError(t, err)
+	req.RemoteAddr = "127.0.0.1:22345"
+	req.Header["X-Forwarded-For"] = []string{"153.220.34.35"}
+
+	rr := httptest.NewRecorder()
+	handler := pa.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(r.RemoteAddr))
+	}))
+	handler.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Equal(t, "153.220.34.35:22345", rr.Body.String())
+}
+
+func TestProxyAddrNegroniMiddleware(t *testing.T) {
+	pa := &ProxyAddr{}
+	err := pa.Init(CIDRLoopback)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest("GET", "/", nil)
+	assert.NoError(t, err)
+	req.RemoteAddr = "127.0.0.1:22345"
+	req.Header["X-Forwarded-For"] = []string{"153.220.34.35"}
+
+	rr := httptest.NewRecorder()
+	handler := negroni.New()
+	handler.Use(pa)
+	handler.UseHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(r.RemoteAddr))
+	})
+	handler.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Equal(t, "153.220.34.35:22345", rr.Body.String())
 }
